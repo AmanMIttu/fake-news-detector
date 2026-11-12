@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore how a text model classifies article language as Fake or Real in its training dataset.">
+  <title>Signal / Noise — Article Analysis</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="masthead">
+    <a class="wordmark" href="/" aria-label="Signal and Noise home"><span class="mark">S/N</span><span>Signal <i>&</i> Noise</span></a>
+    <div class="edition">MODEL NOTEBOOK <span>·</span> TEXT CLASSIFIER</div>
+  </header>
+  <main>
+    <section class="intro">
+      <p class="eyebrow">A small study in language patterns</p>
+      <h1>Read the signal.<br><em>Question the label.</em></h1>
+      <p class="lede">Explore how a machine learning model reads an article. It predicts labels found in a historical dataset; it does not verify claims or determine what is true.</p>
+    </section>
+
+    <section class="workspace" aria-labelledby="analysis-heading">
+      <div class="workspace-heading">
+        <div><p class="eyebrow">01 / INPUT</p><h2 id="analysis-heading">Article desk</h2></div>
+        <span class="local-tag"><span class="dot"></span> LOCAL MODEL</span>
+      </div>
+      {% if error %}<div class="notice error" role="alert">{{ error }}</div>{% endif %}
+      <form method="post" action="/" class="article-form" id="article-form">
+        <label for="title">Headline <span>optional</span></label>
+        <input id="title" name="title" maxlength="50000" value="{{ title }}" placeholder="Add the article headline">
+        <label for="article">Article text <span>required</span></label>
+        <textarea id="article" name="article" rows="11" maxlength="50000" required placeholder="Paste the article text you want to examine…">{{ article }}</textarea>
+        <div class="form-bottom"><span>Up to 50,000 characters · Text stays in this local app</span><button type="submit" id="analyze-button">Analyze language <span aria-hidden="true">↗</span></button></div>
+      </form>
+    </section>
+
+    {% if result %}
+    <section class="result" aria-live="polite" aria-labelledby="result-heading">
+      <div class="result-head">
+        <div><p class="eyebrow">02 / MODEL READOUT</p><h2 id="result-heading">A label, with context</h2></div>
+        <div class="label-card {{ 'fake' if result.label == 'Fake' else 'real' }}"><span>DATASET LABEL</span><strong>{{ result.label }}</strong></div>
+      </div>
+      <p class="caveat">This is the model’s dataset-style classification, not a credibility verdict.</p>
+      <div class="score-list" aria-label="Model scores by dataset label">
+        {% for name in ['Fake', 'Real'] %}
+          <div class="score-row"><div class="score-name">{{ name }} <span>model score</span></div><div class="meter"><span class="{{ 'fake-fill' if name == 'Fake' else 'real-fill' }}" style="width: {{ '%.2f'|format(result.scores[name] * 100) }}%"></span></div><strong>{{ '%.1f'|format(result.scores[name] * 100) }}%</strong></div>
+        {% endfor %}
+      </div>
+      <div class="article-meta"><span>{{ '{:,}'.format(result.word_count) }} words</span><span>{{ '{:,}'.format(result.character_count) }} characters</span></div>
+
+      <div class="explanation-grid">
+        <div class="term-panel supports"><p class="eyebrow">PUSHED TOWARD {{ result.label|upper }}</p><h3>Terms supporting this label</h3>
+          {% if result.supporting_terms %}<ul>{% for term in result.supporting_terms %}<li><span>{{ term.term }}</span><b>+{{ '%.3f'|format(term.weight) }}</b></li>{% endfor %}</ul>{% else %}<p class="muted">No known model features appeared in this text.</p>{% endif %}
+        </div>
+        <div class="term-panel opposes"><p class="eyebrow">COUNTER-SIGNAL</p><h3>Terms pulling the other way</h3>
+          {% if result.opposing_terms %}<ul>{% for term in result.opposing_terms %}<li><span>{{ term.term }}</span><b>{{ '%.3f'|format(term.weight) }}</b></li>{% endfor %}</ul>{% else %}<p class="muted">No strong opposing terms were found.</p>{% endif %}
+        </div>
+      </div>
+      <p class="attribution-note">Term weights show local contributions from this TF-IDF/logistic-regression model. They explain its output, not the article’s factual accuracy.</p>
+    </section>
+    {% else %}
+    <section class="empty-state"><span class="empty-number">02</span><div><h2>Your readout will appear here</h2><p>Paste an article to see the predicted dataset label, model scores, and words that influenced this particular prediction.</p></div></section>
+    {% endif %}
+
+    <section class="method-note"><span class="note-icon">i</span><p><strong>Use this as a lens, not a verdict.</strong> This model learned patterns in a 2016–2017 news corpus. Publisher style, topic, and historical context can drive its output. Check original sources and independent reporting before drawing conclusions.</p></section>
+  </main>
+  <footer><span>SIGNAL / NOISE</span><span>LOCAL ANALYSIS · NO FACT CHECKING</span></footer>
+  <script>
+    const form = document.getElementById("article-form");
+    form.addEventListener("submit", () => {
+      const button = document.getElementById("analyze-button");
+      button.disabled = true;
+      button.setAttribute("aria-busy", "true");
+      button.textContent = "Reading article…";
+    });
+  </script>
+</body>
+</html>

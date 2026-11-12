@@ -1,0 +1,120 @@
+{
+  "accuracy": 0.9899647409818281,
+  "class_counts_after_deduplication": {
+    "Fake": 17905,
+    "Real": 21195
+  },
+  "class_report": {
+    "Fake": {
+      "f1-score": 0.9888386123680242,
+      "precision": 0.9933333333333333,
+      "recall": 0.9843843843843844,
+      "support": 3330.0
+    },
+    "Real": {
+      "f1-score": 0.9908844542990884,
+      "precision": 0.9872361315660285,
+      "recall": 0.9945598417408507,
+      "support": 4044.0
+    },
+    "accuracy": 0.9899647409818281,
+    "macro avg": {
+      "f1-score": 0.9898615333335563,
+      "precision": 0.9902847324496808,
+      "recall": 0.9894721130626175,
+      "support": 7374.0
+    },
+    "weighted avg": {
+      "f1-score": 0.9899605793831074,
+      "precision": 0.9899895465219718,
+      "recall": 0.9899647409818281,
+      "support": 7374.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      3278,
+      52
+    ],
+    [
+      22,
+      4022
+    ]
+  ],
+  "confusion_matrix_labels": [
+    "Fake",
+    "Real"
+  ],
+  "dataset_audit": {
+    "conflicting_normalized_title_text_groups": 0,
+    "empty_text_rows_removed": 0,
+    "files": {
+      "Fake.csv": {
+        "columns": [
+          "title",
+          "text",
+          "subject",
+          "date"
+        ],
+        "exact_duplicate_rows": 3,
+        "missing_values": {
+          "date": 0,
+          "subject": 0,
+          "text": 0,
+          "title": 0
+        },
+        "rows": 23481
+      },
+      "True.csv": {
+        "columns": [
+          "title",
+          "text",
+          "subject",
+          "date"
+        ],
+        "exact_duplicate_rows": 206,
+        "missing_values": {
+          "date": 0,
+          "subject": 0,
+          "text": 0,
+          "title": 0
+        },
+        "rows": 21417
+      }
+    },
+    "label_source": "Fake.csv -> Fake; True.csv -> Real",
+    "model_input": "title + space + text",
+    "normalized_title_text_duplicate_rows_removed": 5798,
+    "raw_class_counts": {
+      "Fake": 23481,
+      "Real": 21417
+    },
+    "retained_class_counts": {
+      "Fake": 17905,
+      "Real": 21195
+    },
+    "retained_unique_model_text_rows": 39100,
+    "source_rows": 44898
+  },
+  "f1_fake": 0.9888386123680242,
+  "f1_macro": 0.9898615333335563,
+  "grouping": "normalized article body; repeated title+body model inputs deduplicated",
+  "model_configuration": {
+    "classifier": "LogisticRegression(max_iter=1000, class_weight='balanced', random_state=42)",
+    "features": "title + body",
+    "vectorizer": "TfidfVectorizer(stop_words='english', max_features=100000, ngram_range=(1, 2), min_df=2, sublinear_tf=True)"
+  },
+  "precision_fake": 0.9933333333333333,
+  "precision_macro": 0.9902847324496808,
+  "recall_fake": 0.9843843843843844,
+  "recall_macro": 0.9894721130626175,
+  "roc_auc_fake_vs_real": 0.9993881864059907,
+  "seed": 42,
+  "split": "first fold of shuffled StratifiedGroupKFold (5 folds)",
+  "test_groups": 7373,
+  "test_is_used_for_model_selection": false,
+  "test_rows": 7374,
+  "train_groups": 31265,
+  "train_rows": 31726,
+  "train_test_group_overlap": 0
+}
